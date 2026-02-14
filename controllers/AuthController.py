@@ -4,48 +4,70 @@ from flasgger import swag_from
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/register', methods=['GET', 'POST'])
+# =========================
+# REGISTRAR USUARIO
+# =========================
+@auth_bp.route('/register', methods=['POST'])
 @swag_from({
-    'tags':["Users"],
-    'parameters':[{
-        'name': 'body',
-         'schema':{
-             'type': 'object',
-             'properties':{
-                 'username':{'type': 'string'},
-                 'email':{'type': 'string'},
-                 'password':{'type': 'string'}
-             },
-            'required': ['username','email','password']
-         }   
+    'tags': ['Users'],
+    'consumes': ['application/json'],
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'username': {'type': 'string'},
+                    'email': {'type': 'string'},
+                    'password': {'type': 'string'}
+                },
+                'required': ['username', 'email', 'password']
+            }
         }
     ],
-    'responses':{
-        200:{
-            'description':'Usuario creado'
-        }
+    'responses': {
+        201: {'description': 'Usuario creado'},
+        400: {'description': 'Datos inválidos'}
     }
 })
 def register():
-    if request.method == 'GET':
-        return jsonify({'message': 'Auth route working'}), 200
-
     data = request.get_json()
-    try:
-        user = authService.register(data['username'], data['email'], data['password'])
-        print('User',user)
-        return jsonify(user.to_dict()), 201
-    except ValueError as e:
-        print(e)
-        return jsonify({'mensage': e}),500
-    
-@auth_bp.route('/users/<int:id>', methods=['GET'])
-def find_by_id(id):
-    try:
-        user= authService.find_by_id(id)
-        print('USER',user)
-        return jsonify(user.to_dict()),201
-    
-    except ValueError as e:
-        print(e)
-        return jsonify({'mensaje': str(e)}),500
+
+    # Validación de datos
+    if not data or not all(k in data for k in ('username', 'email', 'password')):
+        return jsonify({'error': 'Faltan datos obligatorios'}), 400
+
+    result, status = authService.register(
+        data['username'],
+        data['email'],
+        data['password']
+    )
+
+    return jsonify(result), status
+
+
+# =========================
+# OBTENER USUARIO POR ID
+# =========================
+@auth_bp.route('/users/<int:user_id>', methods=['GET'])
+@swag_from({
+    'tags': ['Users'],
+    'parameters': [
+        {
+            'name': 'user_id',
+            'in': 'path',
+            'type': 'integer',
+            'required': True,
+            'description': 'ID del usuario'
+        }
+    ],
+    'responses': {
+        200: {'description': 'Usuario encontrado'},
+        404: {'description': 'Usuario no encontrado'}
+    }
+})
+def get_user_by_id(user_id):
+    result, status = authService.get_user_by_id(user_id)
+    return jsonify(result), status

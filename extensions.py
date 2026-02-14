@@ -5,12 +5,13 @@ from flasgger import Swagger
 db = SQLAlchemy()
 migrate = Migrate()
 
-Swagger_template= {
-    'swagger': "2.0",
-    "info":{
+swagger_template = {
+    "swagger": "2.0",
+    "info": {
         "title": "API",
         "description": "api del 83",
         "version": "1.0"
     }
 }
-Swagger = Swagger(template= Swagger_template)
+
+Swagger(template=swagger_template)

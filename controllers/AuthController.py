@@ -11,10 +11,10 @@ auth_bp = Blueprint('auth', __name__)
         'name': 'body',
          'schema':{
              'type': 'object',
-             'property':{
-                 'username':{'type': 'sting'},
-                 'email':{'type': 'sting'},
-                 'password':{'type': 'sting'}
+             'properties':{
+                 'username':{'type': 'string'},
+                 'email':{'type': 'string'},
+                 'password':{'type': 'string'}
              },
             'required': ['username','email','password']
          }   

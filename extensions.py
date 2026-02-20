@@ -11,6 +11,14 @@ swagger_template = {
         "title": "API",
         "description": "api del 83",
         "version": "1.0"
+    },
+    "securityDefinitions":{
+        "BearerAuth":{
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Aqui va <token>"
+        }
     }
 }
 

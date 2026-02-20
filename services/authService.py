@@ -1,6 +1,9 @@
 from models.user import User
 from extensions import db
 from werkzeug.security import generate_password_hash
+from flask_jwt_extended import create_access_token
+from datetime import timedelta
+from repository import userRepository
 
 class authService:
 
@@ -33,3 +36,26 @@ class authService:
             return {'error': 'Usuario no encontrado'}, 404
 
         return user.to_dict(), 200
+    
+    @staticmethod
+    def login(username,password):
+        user = userRepository.get_user_by_user(username)
+
+        if not user:
+            return None
+        
+        check = user.check_password(password)
+
+        claims ={
+            "username": user.username
+        }
+
+        token = create_access_token(
+            identity= str(user.id),
+            additional_claims= claims,
+            expires_delta= timedelta(hours=8)
+        )
+        return {
+            "access_token": token,
+            "user": user
+        }

@@ -1,16 +1,17 @@
 from flask import Blueprint, request, jsonify
 from services.authService import authService
 from flasgger import swag_from
+from flask_jwt_extended import jwt_required
 
 auth_bp = Blueprint('auth', __name__)
 
-# =========================
-# REGISTRAR USUARIO
-# =========================
+
 @auth_bp.route('/register', methods=['POST'])
+@jwt_required()
 @swag_from({
     'tags': ['Users'],
     'consumes': ['application/json'],
+    "security": [{"BearerAuth": []}],
     'parameters': [
         {
             'name': 'body',
@@ -71,3 +72,16 @@ def register():
 def get_user_by_id(user_id):
     result, status = authService.get_user_by_id(user_id)
     return jsonify(result), status
+
+
+def login():
+    data= request.get_json()
+    result = authService.login(data["username"], data["password"])
+    if not result:
+        return jsonify({"message": "credencial invalid"}), 401
+    token = result["access_token"]
+    user = result['user']
+    return jsonify({
+        "access_token": token,
+        "user": user.to_dict()
+    }),200

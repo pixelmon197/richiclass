@@ -49,9 +49,7 @@ def register():
     return jsonify(result), status
 
 
-# =========================
-# OBTENER USUARIO POR ID
-# =========================
+
 @auth_bp.route('/users/<int:user_id>', methods=['GET'])
 @swag_from({
     'tags': ['Users'],
@@ -72,6 +70,30 @@ def register():
 def get_user_by_id(user_id):
     result, status = authService.get_user_by_id(user_id)
     return jsonify(result), status
+
+@auth_bp.route('/login', methods=['POST'])
+@swag_from({
+    'tags': ['Auth'],
+    'parameters': [
+         {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                        'username': {
+                            'type': 'string'
+                        },
+                        'password': {
+                            'type': 'string'
+                        }
+                    },
+                    'required': ['username', 'password']
+            }
+        }],
+        'responses': {200: {'description': 'token'},}
+        })
 
 
 def login():

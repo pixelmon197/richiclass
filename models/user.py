@@ -1,5 +1,6 @@
 from  extensions import db
 from passlib.hash import bcrypt, bcrypt_sha256 
+from passlib.hash import pbkdf2_sha256
 
 class User(db.Model):
     __tablename__= 'users'
@@ -15,7 +16,7 @@ class User(db.Model):
             password = password[:72]
             raise ValueError("La contraseña no puede exceder 72 bytes")
         #self.password = bcrypt_sha256.hash(password)
-        self.password = pbkdf2_sha256.hash(password_bytes)
+        self.password = pbkdf2_sha256.hash(password)
     
     def check_password(self, password : str) -> bool:
         print("SELF VALUE")

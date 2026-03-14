@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
 from repository import userRepository
+from passlib.hash import bcrypt_sha256
 
 class authService:
 
@@ -14,7 +15,7 @@ class authService:
         if existing_user:
             return {'error': 'El usuario ya existe'}, 400
 
-        hashed_password = generate_password_hash(password)
+        hashed_password = bcrypt_sha256.hash(password)
 
         user = User(
             username=username,
@@ -30,7 +31,7 @@ class authService:
 
     @staticmethod
     def get_user_by_id(user_id):
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
 
         if not user:
             return {'error': 'Usuario no encontrado'}, 404
@@ -39,7 +40,7 @@ class authService:
     
     @staticmethod
     def login(username,password):
-        user = userRepository.get_user_by_user(username)
+        user = userRepository.find_by_user(username)
 
         if not user:
             return None
@@ -57,5 +58,5 @@ class authService:
         )
         return {
             "access_token": token,
-            "user": user
+            "user": user.to_dict()
         }

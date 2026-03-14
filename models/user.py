@@ -12,24 +12,20 @@ class User(db.Model):
 
     def set_password(self, password: str):
         print("SELF",self)
-        if len(password.encode('utf-8')) > 72:
-            password = password[:72]
-            raise ValueError("La contraseña no puede exceder 72 bytes")
-        #self.password = bcrypt_sha256.hash(password)
-        self.password = pbkdf2_sha256.hash(password)
+        password_bytes = password.encode('utf-8')[:72]
+        self.password = bcrypt_sha256.hash(password)
     
     def check_password(self, password : str) -> bool:
         print("SELF VALUE")
         print(self)
         #ret
-        return pbkdf2_sha256.verify(password, self.password)
+        return bcrypt_sha256.verify(password, self.password)
 
     def to_dict(self):
         return{
             'id': self.id,
             'username':self.username,
              'email': self.email,
+             'password': self.password
         }
                       
-
-

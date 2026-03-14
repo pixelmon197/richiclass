@@ -100,10 +100,10 @@ def login():
     data= request.get_json()
     result = authService.login(data["username"], data["password"])
     if not result:
-        return jsonify({"message": "credencial invalid"}), 401
+        return jsonify({"message": "credencial invalida"}), 401
     token = result["access_token"]
     user = result['user']
     return jsonify({
         "access_token": token,
-        "user": user.to_dict()
+        "user": user
     }),200

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from   flask_jwt_extended import jwt_required,get_jwt_identity,get_jwt
+from flask_jwt_extended import jwt_required,get_jwt_identity,get_jwt
 from flasgger import swag_from
 
 user_bp = Blueprint('users', __name__)
@@ -14,8 +14,8 @@ user_bp = Blueprint('users', __name__)
             "description": "Informacion del usuario autentificado",
             "examples":{
                 "application/json":{
-                    "id": "2",
-                    "username": "richie2050"
+                    "id": "77",
+                    "username": "Axel123"
                 }
             }
         },
